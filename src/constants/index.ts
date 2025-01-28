@@ -1,6 +1,9 @@
 import {
+  FaBook,
+  FaBookOpen,
   FaCalendarAlt,
   FaChartBar,
+  FaCheckCircle,
   FaFacebookMessenger,
   FaListAlt,
   FaUsersCog,
@@ -8,11 +11,8 @@ import {
 import { GoGoal } from "react-icons/go";
 import { GrPlan } from "react-icons/gr";
 import {
-  IoIosEyeOff,
   IoIosLogIn,
   IoIosLogOut,
-  IoIosPerson,
-  IoIosPersonAdd,
   IoIosSettings,
   IoIosStats,
 } from "react-icons/io";
@@ -69,24 +69,27 @@ export const links = [
   },
 ];
 
-export const empolyeesData = [
+export const bookData = [
   {
+    name: "total",
     title: "Total Buku",
-    icon: IoIosPerson,
+    icon: FaBook,
     count: 8,
     bgColor: "bg-gray-100",
   },
   {
+    name: "currently",
     title: "Sedang Dibaca",
-    icon: IoIosEyeOff,
+    icon: FaBookOpen,
     count: 2,
-    bgColor: "bg-blue-100",
+    bgColor: "bg-gray-100",
   },
   {
+    name: "finish",
     title: "Selesai Dibaca",
-    icon: IoIosPersonAdd,
+    icon: FaCheckCircle,
     count: 3,
-    bgColor: "bg-yellow-100",
+    bgColor: "bg-gray-100",
   },
 ];
 

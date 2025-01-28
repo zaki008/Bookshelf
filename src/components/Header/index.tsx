@@ -1,14 +1,21 @@
+"use client";
+import { toogleDarkMode } from "@/redux/slice/global";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
 
 interface IProps {
-  darkMode?: boolean;
-  toogleDarkMode?: () => void;
   toogleSidebar?: () => void;
 }
 
-const Header = ({ darkMode, toogleDarkMode, toogleSidebar }: IProps) => {
+const Header = ({ toogleSidebar }: IProps) => {
+  const dispatch = useDispatch();
+  const { darkMode } = useSelector((state: any) => state.global);
+
+  const handleThema = () => {
+    dispatch(toogleDarkMode({ darkMode }));
+  };
   return (
     <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
@@ -29,7 +36,7 @@ const Header = ({ darkMode, toogleDarkMode, toogleSidebar }: IProps) => {
           </div>
           <button
             className="dark:bg-slate-50 dark:text-slate-700 rounded-full p-2"
-            onClick={toogleDarkMode}
+            onClick={handleThema}
           >
             {darkMode ? <FaSun /> : <FaMoon />}
           </button>

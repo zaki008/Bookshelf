@@ -5,38 +5,30 @@ import Sidebar from "@/components/Sidebar";
 import Stats from "@/components/Stats/Stats";
 import Table from "@/components/Table";
 import Content from "@/ui/Content";
+import DarkMode from "@/ui/DarkMode";
 import MainUI from "@/ui/MainUI";
 import { useState } from "react";
 
 const Home = () => {
-  const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const toogleDarkMode = () => {
-    setDarkMode((prev) => !prev);
-  };
 
   const toogleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
 
   return (
-    <div className={`${darkMode && "dark"}`}>
-      <Header
-        darkMode={darkMode}
-        toogleDarkMode={toogleDarkMode}
-        toogleSidebar={toogleSidebar}
-      />
+    <DarkMode>
+      <Header toogleSidebar={toogleSidebar} />
       <Sidebar sidebarOpen={sidebarOpen} />
       <MainUI>
         <Content>
-          <Stats darkMode={darkMode} />
+          <Stats />
           <Filter />
           <Table />
         </Content>
         {/* <Profile /> */}
       </MainUI>
-    </div>
+    </DarkMode>
   );
 };
 
