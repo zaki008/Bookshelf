@@ -1,11 +1,20 @@
+import { postLogin } from "@/redux/slice/authSlice";
+import { AppDispatch } from "@/redux/store";
 import Button from "@/ui/Button";
 import Input from "@/ui/Input";
+import Loading from "@/ui/loading";
 import Title from "@/ui/Title";
 import { schemaLogin } from "@/utils/ValidationSchema";
 import { Formik } from "formik";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 
 const FormLogin = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const { isLoading } = useSelector((state: any) => state.auth);
+
   return (
     <div className="w-5/6 md:w-4/6 lg:w-3/6 xl:w-2/6 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <Title type="form">Login</Title>
@@ -16,19 +25,18 @@ const FormLogin = () => {
           password: "",
         }}
         validationSchema={schemaLogin}
-        onSubmit={(values, { setSubmitting }) => {
-          console.log("submit");
+        onSubmit={async (values, { setSubmitting }) => {
+          const data = {
+            email: values.email,
+            password: values.password,
+          };
+          const result = await dispatch(postLogin(data));
+          if (postLogin.fulfilled.match(result)) {
+            router.push("/");
+          }
         }}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleSubmit,
-
-          /* and other goodies */
-        }) => {
+        {({ values, errors, touched, handleChange, handleSubmit }) => {
           return (
             <form className="w-full mx-auto" onSubmit={handleSubmit}>
               <Input
@@ -51,7 +59,11 @@ const FormLogin = () => {
                   errors.password && touched.password ? errors.password : ""
                 }
               />
-              <Button title={"Submit"} type="submit" />
+              {isLoading ? (
+                <Loading type="loadBtn" classname="mt-2" />
+              ) : (
+                <Button className="mt-2" title={"Submit"} type="submit" />
+              )}
             </form>
           );
         }}

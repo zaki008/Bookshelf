@@ -1,21 +1,7 @@
-import {
-  FaBook,
-  FaBookOpen,
-  FaCalendarAlt,
-  FaChartBar,
-  FaCheckCircle,
-  FaFacebookMessenger,
-  FaListAlt,
-  FaUsersCog,
-} from "react-icons/fa";
+import { FaBook, FaBookOpen, FaChartBar, FaCheckCircle } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
 import { GrPlan } from "react-icons/gr";
-import {
-  IoIosLogIn,
-  IoIosLogOut,
-  IoIosSettings,
-  IoIosStats,
-} from "react-icons/io";
+import { IoIosLogOut, IoIosSettings, IoIosStats } from "react-icons/io";
 
 import user01 from "@/assets/user01.png";
 import user02 from "@/assets/user02.png";
@@ -29,43 +15,8 @@ export const links = [
   },
   {
     href: "#",
-    icon: FaCalendarAlt,
-    text: "Kanban",
-    badge: {
-      text: "Pro",
-      color: "bg-gray-100 text-gray-800",
-      darkColor: "dark:bg-gray-700 dark:text-gray-300",
-    },
-  },
-  {
-    href: "#",
-    icon: FaFacebookMessenger,
-    text: "Inbox",
-    badge: {
-      text: "4",
-      color: "bg-blue-100 text-blue-800",
-      darkColor: "dark:bg-blue-900 dark:text-blue-300",
-    },
-  },
-  {
-    href: "#",
-    icon: FaUsersCog,
-    text: "Users",
-  },
-  {
-    href: "#",
-    icon: FaListAlt,
-    text: "Products",
-  },
-  {
-    href: "#",
-    icon: IoIosLogIn,
-    text: "Sign In",
-  },
-  {
-    href: "#",
     icon: IoIosLogOut,
-    text: "Sign Up",
+    text: "Logout",
   },
 ];
 

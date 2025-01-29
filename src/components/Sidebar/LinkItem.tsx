@@ -1,3 +1,8 @@
+import { postLogout } from "@/redux/slice/authSlice";
+import { AppDispatch } from "@/redux/store";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 interface Badge {
   text: string;
   color: string;
@@ -12,10 +17,20 @@ interface IProps {
 }
 
 const LinkItem = ({ href, icon: Icon, text, badge }: IProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const { isSuccess, isError, isLoading, message } = useSelector(
+    (state: any) => state.auth
+  );
+
+  const handleLogout = () => {
+    dispatch(postLogout());
+  };
   return (
     <li>
-      <a
-        href={href}
+      <Link
+        onClick={text === "Logout" ? handleLogout : undefined}
+        href={text === "Logout" ? "#" : href}
         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
       >
         <Icon className="mr-2" />
@@ -27,7 +42,7 @@ const LinkItem = ({ href, icon: Icon, text, badge }: IProps) => {
             {badge.text}
           </span>
         )}
-      </a>
+      </Link>
     </li>
   );
 };

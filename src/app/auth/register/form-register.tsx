@@ -1,17 +1,42 @@
+import { postRegister, resetAuthRedux } from "@/redux/slice/authSlice";
+import { AppDispatch } from "@/redux/store";
 import Button from "@/ui/Button";
 import Input from "@/ui/Input";
+import Loading from "@/ui/loading";
 import Title from "@/ui/Title";
+import { alertMessage } from "@/utils/alertMessage";
 import { schemaRegister } from "@/utils/ValidationSchema";
 import { Formik } from "formik";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const FormRegister = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const { isSuccess, isError, isLoading, message } = useSelector(
+    (state: any) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError && message) {
+      alertMessage(message, "error");
+    }
+    if (isSuccess) {
+      alertMessage(message, "success");
+      router.push("/auth/login");
+    }
+    dispatch(resetAuthRedux());
+  }, [isError, isSuccess]);
+
   return (
     <div className="w-5/6 md:w-4/6 lg:w-3/6 xl:w-2/6 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <Title type="form">Register</Title>
       <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
       <Formik
         initialValues={{
+          name: "",
           username: "",
           email: "",
           password: "",
@@ -19,20 +44,27 @@ const FormRegister = () => {
         }}
         validationSchema={schemaRegister}
         onSubmit={(values, { setSubmitting }) => {
-          console.log("submit", values);
+          const data = {
+            name: values.name,
+            username: values.username,
+            email: values.email,
+            password: values.password,
+          };
+          dispatch(postRegister(data));
         }}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleSubmit,
-
-          /* and other goodies */
-        }) => {
+        {({ values, errors, touched, handleChange, handleSubmit }) => {
           return (
             <form className="w-full mx-auto" onSubmit={handleSubmit}>
+              <Input
+                title="Nama"
+                type="text"
+                placeholder="Input Your Username"
+                name="name"
+                value={values.name}
+                error={errors.name && touched.name ? errors.name : ""}
+                onChange={handleChange}
+              />
               <Input
                 title="Username"
                 type="text"
@@ -77,7 +109,11 @@ const FormRegister = () => {
                 }
                 onChange={handleChange}
               />
-              <Button title={"Submit"} type="submit" />
+              {isLoading ? (
+                <Loading classname="mt-2" type="loadBtn" />
+              ) : (
+                <Button className="mt-2" title={"Submit"} type="submit" />
+              )}
             </form>
           );
         }}

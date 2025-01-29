@@ -9,7 +9,7 @@ const Register = () => {
   return (
     <DarkMode>
       <Header />
-      <div className="h-screen flex justify-center items-center dark:bg-gray-800">
+      <div className="h-screen flex justify-center mt-5 items-center dark:bg-gray-800">
         <FormRegister />
       </div>
     </DarkMode>

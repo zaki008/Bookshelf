@@ -1,7 +1,9 @@
 "use client";
 import { persistor, store } from "@/redux/store";
+import { SessionProvider } from "next-auth/react";
 import { Poppins } from "next/font/google";
 import { Provider } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import { PersistGate } from "redux-persist/integration/react";
 import "./globals.css";
 
@@ -35,11 +37,24 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            {children}
-          </PersistGate>
-        </Provider>
+        <SessionProvider>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={true}
+                draggable={true}
+                pauseOnHover={true}
+              />
+              {children}
+            </PersistGate>
+          </Provider>
+        </SessionProvider>
       </body>
     </html>
   );
