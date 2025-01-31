@@ -14,13 +14,13 @@ datasource db {
 }
 
 enum bookCategory{
-  Technology
-  Fantasy
-  Mystery
-  Romance
-  Horror
-  Adventure
-  Philosophy
+  technology
+  fantasy
+  mystery
+  romance
+  horror
+  adventure
+  philosophy
 }
 
 enum bookStatus{
@@ -45,7 +45,7 @@ model User{
 }
 
 model Book{
-  id String @id @default(cuid())
+  id Int @id @default(autoincrement())
   title String @db.VarChar(150)
   author String @db.VarChar(100)
   isbn String @db.VarChar(100) @unique

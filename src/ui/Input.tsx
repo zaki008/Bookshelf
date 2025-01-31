@@ -5,7 +5,7 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const Input = ({ title, error, ...props }: IProps) => {
   return (
-    <div className="mb-3">
+    <div className="mb-3 w-full">
       <label
         htmlFor={props.id}
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -19,7 +19,7 @@ const Input = ({ title, error, ...props }: IProps) => {
         }`}
       />
       {error && (
-        <label className="block mt-1 mb-2 text-xs font-medium text-red-700 dark:text-red-500">
+        <label className="block mt-1 text-xs font-medium text-red-700 dark:text-red-500">
           {error}
         </label>
       )}

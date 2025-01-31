@@ -146,8 +146,8 @@ export const postLogout = createAsyncThunk(
         },
       });
       if (res) {
-        Cookies.remove("tokenLogin");
         const persistor = persistStore(store);
+        Cookies.remove("tokenLogin");
         persistor.purge();
         thunkAPI.dispatch({ type: "LOGOUT" });
         alertMessage("berhasil logout", "success");

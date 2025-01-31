@@ -13,3 +13,12 @@ export const schemaRegister = Yup.object({
     .oneOf([Yup.ref("password")], "password is must match")
     .required("confirm password Is a required"),
 }).required();
+
+export const schemaCreateBook = Yup.object({
+  judul: Yup.string().required(),
+  penulis: Yup.string().required(),
+  isbn: Yup.string().required(),
+  cover: Yup.string().required(),
+  kategori: Yup.string().required(),
+  status: Yup.string().required(),
+}).required();

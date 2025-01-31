@@ -1,31 +1,36 @@
 import { bookStatus, categoryBook } from "@/constants";
-import { getBooks, postBook } from "@/redux/slice/bookSlice";
+import { getBooks, putBook } from "@/redux/slice/bookSlice";
 import { AppDispatch } from "@/redux/store";
 import Button from "@/ui/Button";
 import Input from "@/ui/Input";
+import Loading from "@/ui/loading";
 import Modal from "@/ui/Modal";
 import Select from "@/ui/Select";
 import { alertMessage } from "@/utils/alertMessage";
 import { convertFileToBase64 } from "@/utils/helpers";
 import { Formik } from "formik";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 interface IProps {
   setModalOpen: (updater: (prev: boolean) => boolean) => void;
+  data: bookProps | null;
 }
 
-const ModalCreate = ({ setModalOpen }: IProps) => {
+const ModalEdit = ({ setModalOpen, data }: IProps) => {
+  const { isLoading } = useSelector((state: any) => state.book);
+  const [convertImage, setConverImage] = useState(null);
   const dispatch = useDispatch<AppDispatch>();
   return (
-    <Modal title="Tambah Buku" setModalOpen={setModalOpen}>
+    <Modal title="Edit Buku" setModalOpen={setModalOpen}>
       <Formik
         initialValues={{
-          judul: "",
-          penulis: "",
-          isbn: "",
-          cover: null,
-          kategori: "",
-          status: "",
+          judul: data?.title,
+          penulis: data?.author,
+          isbn: data?.isbn,
+          cover: data?.cover,
+          kategori: data?.category,
+          status: data?.status,
         }}
         onSubmit={async (values, { setSubmitting }) => {
           const formData = {
@@ -36,10 +41,18 @@ const ModalCreate = ({ setModalOpen }: IProps) => {
             category: values.kategori,
             status: values.status,
           };
-          const result = await dispatch(postBook(formData));
-          if (postBook.fulfilled.match(result)) {
-            setModalOpen((prev) => !prev);
-            dispatch(getBooks());
+          console.log(formData);
+          const sendData = {
+            id: data?.id,
+            formData,
+          };
+          if (sendData) {
+            console.log(sendData);
+            const result = await dispatch(putBook(sendData));
+            if (putBook.fulfilled.match(result)) {
+              setModalOpen((prev) => !prev);
+              dispatch(getBooks());
+            }
           }
         }}
       >
@@ -146,7 +159,11 @@ const ModalCreate = ({ setModalOpen }: IProps) => {
                   onChange={handleImage}
                 />
               </div>
-              <Button className="mt-3" title={"Submit"} type="submit" />
+              {isLoading ? (
+                <Loading type="loadBtn" />
+              ) : (
+                <Button className="mt-3" title={"Submit"} type="submit" />
+              )}
             </form>
           );
         }}
@@ -155,4 +172,4 @@ const ModalCreate = ({ setModalOpen }: IProps) => {
   );
 };
 
-export default ModalCreate;
+export default ModalEdit;

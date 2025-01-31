@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Stats from "@/components/Stats/Stats";
 import Table from "@/components/Table";
-import { getBooks } from "@/redux/slice/bookSlice";
+import { getBooks, resetBookRedux } from "@/redux/slice/bookSlice";
 import { AppDispatch } from "@/redux/store";
 import Content from "@/ui/Content";
 import DarkMode from "@/ui/DarkMode";
@@ -16,20 +16,21 @@ const Home = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data, isLoading } = useSelector((state: any) => state.book);
-  const [paging, setPaging] = useState({
-    page: 1,
-    size: 10,
-  });
-
-  console.log("data", data);
+  const page = useSelector((state: any) => state.book.page);
 
   useEffect(() => {
-    dispatch(getBooks(paging));
+    dispatch(getBooks());
+  }, [page]);
+
+  useEffect(() => {
+    dispatch(resetBookRedux());
   }, []);
 
   const toogleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
+
+  console.log("data?.countBook", data?.countBook);
 
   return (
     <DarkMode>
@@ -37,9 +38,9 @@ const Home = () => {
       <Sidebar sidebarOpen={sidebarOpen} />
       <MainUI>
         <Content>
-          <Stats />
+          <Stats count={data?.countBook || {}} />
           <Filter />
-          <Table />
+          <Table data={data} isLoading={isLoading} page={page} />
         </Content>
         {/* <Profile /> */}
       </MainUI>

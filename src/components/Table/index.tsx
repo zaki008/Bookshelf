@@ -1,4 +1,55 @@
-const Table = () => {
+import { addnewPage, deleteBook, getBooks } from "@/redux/slice/bookSlice";
+import { AppDispatch } from "@/redux/store";
+import Badge from "@/ui/badge";
+import Loading from "@/ui/loading";
+import ModalDelete from "@/ui/ModalDelete";
+import Pagination from "@/ui/Pagination";
+import { generatePagingText } from "@/utils/helpers";
+import { useEffect, useState } from "react";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { useDispatch } from "react-redux";
+import ModalEdit from "../Filter/ModalEdit";
+
+interface IProps {
+  data: booksResponse;
+  isLoading: boolean;
+  page: number;
+}
+
+const Table = ({ data, page, isLoading }: IProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalEditOpen, setModalEditOpen] = useState<boolean>(false);
+  const [idDelete, setIdDelete] = useState<null | number | string>(null);
+  const [dataEdit, setDataEdit] = useState<bookProps | null>({
+    id: null,
+    title: "",
+    author: "",
+    isbn: "",
+    cover: "",
+    category: "",
+    status: "",
+  });
+
+  const handlePageChange = (page: number) => {
+    dispatch(addnewPage(page));
+  };
+
+  useEffect(() => {
+    return () => {
+      setIdDelete(null);
+      setDataEdit(null);
+    };
+  }, []);
+
+  const handleDelete = async () => {
+    const result = await dispatch(deleteBook(Number(idDelete)));
+    if (deleteBook.fulfilled.match(result)) {
+      setIdDelete(null);
+      setModalOpen((prev) => !prev);
+      dispatch(getBooks());
+    }
+  };
   return (
     <>
       <div className="relative overflow-x-auto shadow-md sm:rounded-sm ">
@@ -24,91 +75,86 @@ const Table = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                The Prakmatic Programmer
-              </th>
-              <td className="px-6 py-4">Technology</td>
-              <td className="px-6 py-4">complated</td>
-              <td className="px-6 py-4">
-                <a
-                  href="#"
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >
-                  Edit
-                </a>
-              </td>
-            </tr>
+            {isLoading ? (
+              <tr>
+                <td colSpan={4}>
+                  <div className="flex justify-center w-full">
+                    <Loading />
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              Array.isArray(data?.data) &&
+              data?.data?.length !== 0 &&
+              data?.data?.map((item) => {
+                return (
+                  <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                    <td
+                      scope="row"
+                      className="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      <p className="font-semibold text-base capitalize">
+                        {item.title}
+                      </p>
+                      <p className="font-light text-xs capitalize">
+                        {item.author}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">{item.category}</td>
+                    <td className="px-6 py-4">
+                      <Badge status={item.status} />
+                    </td>
+                    <td className="px-6 py-4 flex flex-row items-center">
+                      <span
+                        className="cursor-pointer mr-3"
+                        onClick={() => {
+                          setDataEdit(item);
+                          setModalEditOpen((prev) => !prev);
+                        }}
+                      >
+                        <MdEdit className="text-blue-600 text-xl" />
+                      </span>
+                      <span
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setIdDelete(item?.id);
+                          setModalOpen(!modalOpen);
+                        }}
+                      >
+                        <MdDelete className="text-red-600 text-xl" />
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
       <div className="md:flex md:flex-row justify-between mt-3 md:items-center">
-        <p className="font-medium text-sm">Menampilkan 1 - 3 dari 8 Buku</p>
+        <p className="font-medium text-sm">
+          {generatePagingText(data?.paging)}
+        </p>
 
-        <nav aria-label="Page navigation example">
-          <ul className="inline-flex -space-x-px text-sm mt-3 md:mt-0">
-            <li>
-              <a
-                href="#"
-                className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                Previous
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                1
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                2
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                aria-current="page"
-                className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-              >
-                3
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                4
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                5
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                Next
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <Pagination
+          page={page || 1}
+          total_page={data?.paging?.total_page || 1}
+          onPageChange={handlePageChange}
+        />
+        {modalOpen && (
+          <ModalDelete
+            title={"Anda Yakin Ingin Mengapus Data Ini"}
+            handleYes={handleDelete}
+            handleNo={() => {
+              setIdDelete(null);
+              setModalOpen((prev) => !prev);
+            }}
+            isLoading={isLoading}
+          />
+        )}
+        {modalEditOpen && (
+          <ModalEdit data={dataEdit} setModalOpen={setModalEditOpen} />
+        )}
       </div>
     </>
   );
