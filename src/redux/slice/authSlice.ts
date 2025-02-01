@@ -110,6 +110,7 @@ export const postRegister = createAsyncThunk(
   async (formData: payloadRegister, thunkAPI) => {
     try {
       const data = await axios.post(`${API_HOST}auth/register`, formData);
+      alertMessage(data.data.message, "success");
       return data;
     } catch (err: any) {
       const errorMessage = err.response?.data || "Something went wrong";
@@ -150,12 +151,10 @@ export const postLogout = createAsyncThunk(
         Cookies.remove("tokenLogin");
         persistor.purge();
         thunkAPI.dispatch({ type: "LOGOUT" });
-        alertMessage("berhasil logout", "success");
         window.location.assign("/auth/login");
         return res;
       }
     } catch (err: any) {
-      alertMessage(err.response?.data?.message, "error");
       const errorMessage = err.response?.data || "Something went wrong";
       return thunkAPI.rejectWithValue(errorMessage);
     }

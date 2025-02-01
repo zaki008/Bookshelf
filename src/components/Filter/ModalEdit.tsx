@@ -8,6 +8,7 @@ import Modal from "@/ui/Modal";
 import Select from "@/ui/Select";
 import { alertMessage } from "@/utils/alertMessage";
 import { convertFileToBase64 } from "@/utils/helpers";
+import { schemaEditBook } from "@/utils/ValidationSchema";
 import { Formik } from "formik";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +33,7 @@ const ModalEdit = ({ setModalOpen, data }: IProps) => {
           kategori: data?.category,
           status: data?.status,
         }}
+        validationSchema={schemaEditBook}
         onSubmit={async (values, { setSubmitting }) => {
           const formData = {
             title: values.judul,
@@ -47,7 +49,6 @@ const ModalEdit = ({ setModalOpen, data }: IProps) => {
             formData,
           };
           if (sendData) {
-            console.log(sendData);
             const result = await dispatch(putBook(sendData));
             if (putBook.fulfilled.match(result)) {
               setModalOpen((prev) => !prev);
@@ -129,6 +130,7 @@ const ModalEdit = ({ setModalOpen, data }: IProps) => {
                   onChange={handleChange}
                 />
                 <Select
+                  className="mb-3"
                   title="Kategori"
                   id="kategori"
                   name="kategori"
@@ -141,6 +143,7 @@ const ModalEdit = ({ setModalOpen, data }: IProps) => {
                   onChange={handleSelectChange}
                 />
                 <Select
+                  className="mb-3"
                   title="Status Baca"
                   id="status"
                   name="status"

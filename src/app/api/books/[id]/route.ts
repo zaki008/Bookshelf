@@ -2,7 +2,53 @@ import Response from "@/lib/api.response";
 import { prisma } from "@/lib/prisma";
 import validateAuthHeader from "@/utils/validateAuthHeader";
 import fs from "fs";
+import { NextRequest } from "next/server";
 import path from "path";
+
+export const GET = async (
+  req: NextRequest,
+  { params }: { params: { id: string | number } }
+) => {
+  try {
+    const { id } = params;
+
+    const authValidationResult = validateAuthHeader(req);
+    if (authValidationResult.status) {
+      return Response(authValidationResult);
+    }
+    const { data } = authValidationResult;
+
+    const book = await prisma.book.findFirst({
+      where: {
+        username: data?.username,
+        id: Number(id),
+      },
+      select: {
+        id: true,
+        title: true,
+        author: true,
+        isbn: true,
+        cover: true,
+        category: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    return Response({
+      message: "Get Book By Id Is Successfully",
+      data: book,
+      status: 200,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return Response({
+      message: "Failed to get Book by id",
+      data: error,
+      status: 500,
+    });
+  }
+};
 
 export const DELETE = async (
   req: Request,

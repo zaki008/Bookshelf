@@ -2,7 +2,7 @@ import { postLogout } from "@/redux/slice/authSlice";
 import { AppDispatch } from "@/redux/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 interface Badge {
   text: string;
   color: string;
@@ -19,9 +19,6 @@ interface IProps {
 const LinkItem = ({ href, icon: Icon, text, badge }: IProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { isSuccess, isError, isLoading, message } = useSelector(
-    (state: any) => state.auth
-  );
 
   const handleLogout = () => {
     dispatch(postLogout());

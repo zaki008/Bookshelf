@@ -6,9 +6,9 @@ declare interface book {
   cover: string | null;
   category: string;
   status: string;
-  username: string;
+  username?: string;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 declare interface booksResponse {
@@ -29,4 +29,19 @@ declare interface bookProps {
   cover: string | null;
   category: string;
   status: string;
+}
+
+declare interface bookDetail {
+  data: {
+    id: string | number;
+    title: string;
+    author: string;
+    isbn: string;
+    cover: string | null;
+    category: string;
+    status: string;
+    username?: string;
+    createdAt: string;
+    updatedAt?: string;
+  };
 }

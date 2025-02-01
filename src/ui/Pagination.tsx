@@ -12,16 +12,16 @@ const Pagination = ({ page, total_page, onPageChange }: IProps) => {
   };
 
   return (
-    <nav aria-label="Page navigation example ">
-      <ul className="inline-flex -space-x-px text-sm mt-3 md:mt-0 ">
+    <nav aria-label="Page navigation example">
+      <ul className="inline-flex -space-x-px text-sm mt-3 md:mt-0">
         <li>
           <button
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 1}
             className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight border border-e-0 rounded-s-lg ${
               page === 1
-                ? "text-gray-300 bg-gray-100 cursor-not-allowed"
-                : "text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700"
+                ? "text-gray-300 bg-gray-100 cursor-not-allowed dark:text-gray-500 dark:bg-gray-700 dark:cursor-not-allowed"
+                : "text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-gray-200"
             }`}
           >
             Previous
@@ -35,8 +35,8 @@ const Pagination = ({ page, total_page, onPageChange }: IProps) => {
                 onClick={() => handlePageChange(pageNumber)}
                 className={`flex items-center justify-center px-3 h-8 leading-tight border ${
                   page === pageNumber
-                    ? "text-blue-600 border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700"
-                    : "text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700"
+                    ? "text-gray-600 border-gray-300 bg-gray-200 hover:bg-gray-300 hover:text-gray-800 dark:text-gray-200 dark:border-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500 dark:hover:text-white"
+                    : "text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-gray-200"
                 }`}
               >
                 {pageNumber}
@@ -50,8 +50,8 @@ const Pagination = ({ page, total_page, onPageChange }: IProps) => {
             disabled={page === total_page}
             className={`flex items-center justify-center px-3 h-8 leading-tight border rounded-e-lg ${
               page === total_page
-                ? "text-gray-300 bg-gray-100 cursor-not-allowed"
-                : "text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700"
+                ? "text-gray-300 bg-gray-100 cursor-not-allowed dark:text-gray-500 dark:bg-gray-700 dark:cursor-not-allowed"
+                : "text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-gray-200"
             }`}
           >
             Next

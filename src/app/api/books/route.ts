@@ -1,6 +1,7 @@
 import Response from "@/lib/api.response";
 import { prisma } from "@/lib/prisma";
 import validateAuthHeader from "@/utils/validateAuthHeader";
+import { bookStatus } from "@prisma/client";
 import fs from "fs";
 import { NextRequest } from "next/server";
 import path from "path";
@@ -10,6 +11,8 @@ export const GET = async (req: NextRequest) => {
     const query = req.nextUrl.searchParams;
     const page = query.get("page") ? parseInt(query.get("page") as string) : 1;
     const size = query.get("size") ? parseInt(query.get("size") as string) : 10;
+    const title = query.get("title") ? query.get("title") : "";
+    const status = query.get("status") ? query.get("status") : "";
 
     const authValidationResult = validateAuthHeader(req);
     if (authValidationResult.status) {
@@ -18,8 +21,27 @@ export const GET = async (req: NextRequest) => {
     const { data } = authValidationResult;
     const skip = (page - 1) * size;
 
+    const filter = [];
+
+    if (title) {
+      filter.push({
+        title: {
+          contains: title,
+        },
+      });
+    }
+
+    if (status) {
+      filter.push({
+        status: {
+          equals: status as bookStatus,
+        },
+      });
+    }
+
     const books = await prisma.book.findMany({
       where: {
+        AND: filter,
         username: data?.username,
       },
       orderBy: {

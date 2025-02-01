@@ -3,18 +3,21 @@ import { getBooks, postBook } from "@/redux/slice/bookSlice";
 import { AppDispatch } from "@/redux/store";
 import Button from "@/ui/Button";
 import Input from "@/ui/Input";
+import Loading from "@/ui/loading";
 import Modal from "@/ui/Modal";
 import Select from "@/ui/Select";
 import { alertMessage } from "@/utils/alertMessage";
 import { convertFileToBase64 } from "@/utils/helpers";
+import { schemaCreateBook } from "@/utils/ValidationSchema";
 import { Formik } from "formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface IProps {
   setModalOpen: (updater: (prev: boolean) => boolean) => void;
 }
 
 const ModalCreate = ({ setModalOpen }: IProps) => {
+  const { isLoading } = useSelector((state: any) => state.book);
   const dispatch = useDispatch<AppDispatch>();
   return (
     <Modal title="Tambah Buku" setModalOpen={setModalOpen}>
@@ -27,6 +30,7 @@ const ModalCreate = ({ setModalOpen }: IProps) => {
           kategori: "",
           status: "",
         }}
+        validationSchema={schemaCreateBook}
         onSubmit={async (values, { setSubmitting }) => {
           const formData = {
             title: values.judul,
@@ -116,6 +120,7 @@ const ModalCreate = ({ setModalOpen }: IProps) => {
                   onChange={handleChange}
                 />
                 <Select
+                  className="mb-3"
                   title="Kategori"
                   id="kategori"
                   name="kategori"
@@ -128,6 +133,7 @@ const ModalCreate = ({ setModalOpen }: IProps) => {
                   onChange={handleSelectChange}
                 />
                 <Select
+                  className="mb-3"
                   title="Status Baca"
                   id="status"
                   name="status"
@@ -146,7 +152,11 @@ const ModalCreate = ({ setModalOpen }: IProps) => {
                   onChange={handleImage}
                 />
               </div>
-              <Button className="mt-3" title={"Submit"} type="submit" />
+              {isLoading ? (
+                <Loading classname="mt-3" type="loadBtn" />
+              ) : (
+                <Button className="mt-3" title={"Submit"} type="submit" />
+              )}
             </form>
           );
         }}

@@ -1,6 +1,7 @@
 import { API_HOST } from "@/config";
 import { payloadCreateBook } from "@/typings/payloadApi";
 import { alertMessage } from "@/utils/alertMessage";
+import { bookStatus } from "@prisma/client";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -12,6 +13,9 @@ export interface BookState {
   page: string | number;
   size: string | number;
   message: string | null | unknown;
+  title: string | null;
+  status: bookStatus | string;
+  dataBook: book | {};
 }
 
 const initialState: BookState = {
@@ -21,6 +25,9 @@ const initialState: BookState = {
   page: 1,
   size: 4,
   message: "",
+  title: "",
+  status: "",
+  dataBook: {} as Partial<bookDetail>,
 };
 
 const bookSlice = createSlice({
@@ -33,9 +40,23 @@ const bookSlice = createSlice({
       state.isError = false;
       state.page = 1;
       state.size = 4;
+      state.title = "";
+      state.status = "";
     },
     addnewPage: (state, action) => {
       state.page = action.payload;
+    },
+    changeTitle: (state, action) => {
+      console.log("action payload", action.payload);
+      state.title = action.payload;
+    },
+    changeStatus: (state, action) => {
+      state.status = action.payload;
+    },
+    changeFilter: (state, action) => {
+      state.page = action.payload.page;
+      state.title = action.payload.title;
+      state.status = action.payload.status;
     },
   },
   extraReducers: (builder) => {
@@ -90,6 +111,20 @@ const bookSlice = createSlice({
       state.isError = true;
       state.isLoading = false;
     });
+
+    builder.addCase(getBookById.pending, (state, action) => {
+      state.isError = true;
+      state.isLoading = false;
+    });
+    builder.addCase(getBookById.fulfilled, (state, action) => {
+      state.isError = true;
+      state.isLoading = false;
+      state.dataBook = action.payload.data;
+    });
+    builder.addCase(getBookById.rejected, (state, action) => {
+      state.isError = true;
+      state.isLoading = false;
+    });
   },
 });
 
@@ -99,14 +134,18 @@ export const getBooks = createAsyncThunk<
   { rejectValue: string }
 >("getUsers", async (_, thunkAPI) => {
   try {
-    const token: any = Cookies.get("tokenLogin");
+    const token: string = Cookies.get("tokenLogin") || "";
     const state = thunkAPI.getState() as { book: BookState };
-    const { page, size } = state.book;
-    const data = await axios.get(`${API_HOST}books?page=${page}&size=${size}`, {
-      headers: {
-        Authorization: token,
-      },
-    });
+    const { page, size, title, status } = state.book;
+    const data = await axios.get(
+      `${API_HOST}books?page=${page}&size=${size}&title=${title}&status=${status}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    console.log("get books", data);
     return data.data;
   } catch (err: any) {
     const errorMessage = err.response?.data || "Something went wrong";
@@ -118,7 +157,7 @@ export const postBook = createAsyncThunk(
   "postBook",
   async (formData: payloadCreateBook, thunkAPI) => {
     try {
-      const token = Cookies.get("tokenLogin");
+      const token: string = Cookies.get("tokenLogin") || "";
       const res = await axios.post(`${API_HOST}books`, formData, {
         headers: {
           Authorization: token,
@@ -139,7 +178,7 @@ export const deleteBook = createAsyncThunk(
   "deleteBook",
   async (id: number, thunkAPI) => {
     try {
-      const token = Cookies.get("tokenLogin");
+      const token: string = Cookies.get("tokenLogin") || "";
       const res = await axios.delete(`${API_HOST}books/${id}`, {
         headers: {
           Authorization: token,
@@ -160,7 +199,7 @@ export const putBook = createAsyncThunk(
   "putBook",
   async (data: any, thunkAPI) => {
     try {
-      const token = Cookies.get("tokenLogin");
+      const token: string = Cookies.get("tokenLogin") || "";
       const res = await axios.put(
         `${API_HOST}books/${data.id}`,
         data.formData,
@@ -181,6 +220,33 @@ export const putBook = createAsyncThunk(
   }
 );
 
-export const { resetBookRedux, addnewPage } = bookSlice.actions;
+export const getBookById = createAsyncThunk<
+  bookDetail,
+  string,
+  { rejectValue: string }
+>("getBookById", async (id, thunkAPI) => {
+  try {
+    const token: string = Cookies.get("tokenLogin") || "";
+    if (token) {
+      const data = await axios.get(`${API_HOST}books/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      return data.data;
+    }
+  } catch (err: any) {
+    const errorMessage = err.response?.data || "Something went wrong";
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+});
+
+export const {
+  resetBookRedux,
+  addnewPage,
+  changeTitle,
+  changeStatus,
+  changeFilter,
+} = bookSlice.actions;
 
 export default bookSlice.reducer;

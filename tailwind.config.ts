@@ -12,6 +12,7 @@ const config: Config = {
     extend: {
       screens: {
         tablet: "850px",
+        tiny: "500px",
       },
       colors: {
         background: "var(--background)",

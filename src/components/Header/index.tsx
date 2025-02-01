@@ -1,5 +1,6 @@
 "use client";
 import { toogleDarkMode } from "@/redux/slice/global";
+import { useRouter } from "next/navigation";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
@@ -10,6 +11,7 @@ interface IProps {
 }
 
 const Header = ({ toogleSidebar }: IProps) => {
+  const router = useRouter();
   const { isLogin, userData } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   const { darkMode } = useSelector((state: any) => state.global);
@@ -31,12 +33,17 @@ const Header = ({ toogleSidebar }: IProps) => {
                 <HiOutlineMenuAlt2 className="text-2xl" />
               </button>
             )}
-            <a href="#" className="flex ms-2 md:me-24">
+            <div className="flex ms-2 md:me-24">
               <GiBookshelf className="h-8 me-3 text-xl text-blue-500" />
-              <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+              <span
+                onClick={() =>
+                  isLogin ? router.push("/") : router.push("/auth/login")
+                }
+                className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
+              >
                 BookShelf
               </span>
-            </a>
+            </div>
           </div>
           <div className="flex flex-row items-center">
             {isLogin && userData && (

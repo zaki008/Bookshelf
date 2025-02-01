@@ -1,10 +1,10 @@
-import { postRegister, resetAuthRedux } from "@/redux/slice/authSlice";
+import { postRegister } from "@/redux/slice/authSlice";
+import { resetBookRedux } from "@/redux/slice/bookSlice";
 import { AppDispatch } from "@/redux/store";
 import Button from "@/ui/Button";
 import Input from "@/ui/Input";
 import Loading from "@/ui/loading";
 import Title from "@/ui/Title";
-import { alertMessage } from "@/utils/alertMessage";
 import { schemaRegister } from "@/utils/ValidationSchema";
 import { Formik } from "formik";
 import Link from "next/link";
@@ -15,21 +15,13 @@ import { useDispatch, useSelector } from "react-redux";
 const FormRegister = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { isSuccess, isError, isLoading, message } = useSelector(
-    (state: any) => state.auth
-  );
+  const { isLoading } = useSelector((state: any) => state.auth);
 
   useEffect(() => {
-    if (isError && message) {
-      alertMessage(message, "error");
-    }
-    if (isSuccess) {
-      alertMessage(message, "success");
-      router.push("/auth/login");
-    }
-    dispatch(resetAuthRedux());
-  }, [isError, isSuccess]);
-
+    return () => {
+      dispatch(resetBookRedux());
+    };
+  }, []);
   return (
     <div className="w-5/6 md:w-4/6 lg:w-3/6 xl:w-2/6 p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <Title type="form">Register</Title>
@@ -43,14 +35,17 @@ const FormRegister = () => {
           confirmPassword: "",
         }}
         validationSchema={schemaRegister}
-        onSubmit={(values, { setSubmitting }) => {
+        onSubmit={async (values, { setSubmitting }) => {
           const data = {
             name: values.name,
             username: values.username,
             email: values.email,
             password: values.password,
           };
-          dispatch(postRegister(data));
+          const result = await dispatch(postRegister(data));
+          if (postRegister.fulfilled.match(result)) {
+            router.push("/auth/login");
+          }
         }}
       >
         {({ values, errors, touched, handleChange, handleSubmit }) => {

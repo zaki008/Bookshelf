@@ -5,7 +5,7 @@ import { IoIosLogOut, IoIosSettings, IoIosStats } from "react-icons/io";
 
 export const links = [
   {
-    href: "#",
+    href: "/",
     icon: FaChartBar,
     text: "Dashboard",
   },

@@ -6,6 +6,7 @@ export const schemaLogin = Yup.object({
 }).required();
 
 export const schemaRegister = Yup.object({
+  name: Yup.string().required(),
   username: Yup.string().min(3).required(),
   email: Yup.string().email().required(),
   password: Yup.string().min(6).required(),
@@ -19,6 +20,14 @@ export const schemaCreateBook = Yup.object({
   penulis: Yup.string().required(),
   isbn: Yup.string().required(),
   cover: Yup.string().required(),
+  kategori: Yup.string().required(),
+  status: Yup.string().required(),
+}).required();
+
+export const schemaEditBook = Yup.object({
+  judul: Yup.string().required(),
+  penulis: Yup.string().required(),
+  isbn: Yup.string().required(),
   kategori: Yup.string().required(),
   status: Yup.string().required(),
 }).required();
